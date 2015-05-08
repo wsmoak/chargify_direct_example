@@ -65,10 +65,6 @@ class ChargifyDirectExampleApp < Sinatra::Base
       signup_params ? signup_params[:ref] : nil
     end
 
-    def subscription_params
-      signup_params ? signup_params.subscription : {}
-    end
-
     def customer_params
       signup_params ? signup_params.customer : {}
     end
