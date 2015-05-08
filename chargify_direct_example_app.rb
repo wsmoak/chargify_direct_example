@@ -36,15 +36,15 @@ class ChargifyDirectExampleApp < Sinatra::Base
     def chargify
       @chargify ||= Chargify2::Client.new(config)
     end
-  
+
     def config
       @config ||= YAML.load(File.open(config_file)) || {}
     end
-  
+
     def config_file
       File.expand_path File.join(File.dirname(__FILE__), 'config', 'config.yml')
     end
-  
+
     def h(s)
       Rack::Utils.escape_html(s)
     end
@@ -59,6 +59,10 @@ class ChargifyDirectExampleApp < Sinatra::Base
 
     def coupon_code
       signup_params ? signup_params[:coupon_code] : nil
+    end
+
+    def ref
+      signup_params ? signup_params[:ref] : nil
     end
 
     def subscription_params
