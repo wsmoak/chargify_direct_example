@@ -1,0 +1,132 @@
+<h1>Signup for Acme Projects</h1>
+
+<% if @call && !@call.errors.empty? %>
+<div class="errors">
+  <p><strong>Could not complete signup. Please correct the following problems:</strong></p>
+  <ul>
+    <% @call.errors.each do |error| %>
+    <li><%= error.message %></li>
+    <% end %>
+  </ul>
+</div>
+<% end %>
+
+<% if @flash %>
+<div class="errors">
+  <p><strong><%= @flash %></strong></p>
+</div>
+<% end %>
+
+<form method="post" action="<%= chargify.base_uri %>/signups">
+  <%= chargify.direct.secure_parameters(
+    :data => {
+      :redirect_uri => "http://localhost:9292/verify"
+    }
+  ).to_form_inputs %>
+  <fieldset>
+    <legend>Select Plan</legend>
+    <p>
+      <input type="radio" name="signup[product][handle]" id="signup_product_handle_basic" value="basic" <%= 'checked' if product_params[:handle] == 'basic' %>/><label>Basic</label>
+    </p>
+    <p>
+      <input type="radio" name="signup[product][handle]" id="signup_product_handle_pro" value="pro" <%= 'checked' if product_params[:handle] == 'pro' %>/><label>Pro</label>
+    </p>
+  </fieldset>
+
+  <% if config['component_id'] %>
+    <fieldset>
+      <legend>Widgets</legend>
+      <p>
+        <label for="signup_widgets">How Many Widgets?</label><br/>
+        <select name="signup[components][<%= config['component_id'] %>]" id="signup_widgets">
+          <option value="">Please Select</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </p>
+    </fieldset>
+  <% end %>
+
+  <fieldset>
+    <legend>Coupon</legend>
+    <p>
+      <label for="signup_coupon_code">Coupon Code</label><br/>
+      <input type="text" name="signup[coupon_code]" id="signup_coupon_code" value="<%= h(coupon_code) %>" />
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Referral</legend>
+    <p>
+      <label for="signup_referral_code">Referral Code</label><br/>
+      <input type="text" name="signup[ref]" id="signup_referral_code" value="<%= h(ref) %>" />
+    </p>
+  </fieldset>
+
+  <fieldset>
+    <legend>About You</legend>
+
+    <p>
+      <label for="signup_customer_reference">Customer Reference</label><br/>
+      <input type="text" name="signup[customer][reference]" id="signup_customer_reference" value="<%= h(customer_params[:reference]) %>" />
+    </p>
+
+    <p><b>OR</b></p>
+
+    <p>
+      <label for="signup_customer_reference">Customer ID</label><br/>
+      <input type="text" name="signup[customer][id]" id="signup_customer_id" value="<%= h(customer_params[:id]) %>" />
+    </p>
+
+  </fieldset>
+
+  <fieldset>
+    <legend>Payment Profile</legend>
+
+    <p>
+      <label for="signup_payment_profile_id">Payment Profile ID</label><br/>
+      <input type="text" name="signup[payment_profile][id]" id="signup_payment_profile_id" value="<%= h(payment_profile_params[:id]) %>" />
+    </p>
+
+    <p><b>OR</b></p>
+
+    <p>
+      <label for="signup_payment_profile_first_name">First Name on Card</label><br/>
+      <input type="text" name="signup[payment_profile][first_name]" id="signup_payment_profile_first_name" value="<%= h(payment_profile_params[:first_name]) %>" />
+    </p>
+
+    <p>
+      <label for="signup_payment_profile_first_name">Last Name on Card</label><br/>
+      <input type="text" name="signup[payment_profile][last_name]" id="signup_payment_profile_last_name" value="<%= h(payment_profile_params[:last_name]) %>" />
+    </p>
+
+    <p>
+      <label for="signup_payment_profile_card_number">Card Number</label><br/>
+      <input type="text" name="signup[payment_profile][card_number]" id="signup_payment_profile_card_number" value="<%= h(payment_profile_params[:card_number]) %>" />
+    </p>
+
+    <p>
+      Expiration <label for="signup_payment_profile_expiration_month">Month</label> / <label for="signup_payment_profile_expiration_year">Year</label><br/>
+      <select name="signup[payment_profile][expiration_month]" id="signup_payment_profile_expiration_month">
+        <% for i in 1..12 do %>
+        <option value="<%= i %>"<%= ' selected' if payment_profile_params[:expiration_month] == i.to_s %>><%= "%02d" % i.to_s %></option>
+        <% end %>
+      </select>
+      /
+      <select name="signup[payment_profile][expiration_year]" id="signup_payment_profile_expiration_year">
+        <% t = Time.now.year; for i in t..(t+10) %>
+        <option value="<%= i %>"<%= ' selected' if payment_profile_params[:expiration_year] == i.to_s %>><%= i %></option>
+        <% end %>
+      </select>
+    </p>
+  </fieldset>
+
+  <p>
+    <input type="submit" value="Sign Up" />
+    or
+    <a href="/">Go Back</a>
+  </p>
+
+</form>

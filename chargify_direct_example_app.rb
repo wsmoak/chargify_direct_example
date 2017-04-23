@@ -5,6 +5,10 @@ class ChargifyDirectExampleApp < Sinatra::Base
     erb :index
   end
 
+  get '/additional' do
+    erb :additional
+  end
+
   get '/verify' do
     if chargify.direct.response_parameters(params).verified?
       @call = chargify.calls.read(params[:call_id])
